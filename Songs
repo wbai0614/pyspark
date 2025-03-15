@@ -11,3 +11,78 @@ listening_csv_path = '/content/drive/MyDrive/listenings.csv'
 listening_df = spark.read.format('csv').option('inferSchema',True).option('header',True).load(listening_csv_path)
 
 listening_df.show()
+
+# drop unnecessary data
+listening_df = listening_df.drop('date')
+
+# drop null values
+listening_df = listening_df.na.drop()
+
+listening_df.show()
+
+listening_df.printSchema()
+
+shape = (listening_df.count(), len(listening_df.columns))
+print(shape)
+
+# selecting artist and track columns
+artist_track = listening_df.select('artist','track')
+artist_track.show()
+
+# Selecting records with the artist Rihanna
+rihanna = listening_df.select('*').filter(listening_df.artist == 'Rihanna')
+rihanna.show()
+
+# top 10 user_id who listen to Rihanna ordered by count
+top10_rihanna_user = listening_df.select('user_id').filter(listening_df.artist=='Rihanna').groupby('user_id').agg(count('user_id').alias('count')).orderBy(desc('count')).limit(10)
+top10_rihanna_user.show()
+
+# top 10 most famous tracks
+top_10 = listening_df.select('artist','track').groupby('artist','track').agg(count('*').alias('count')).orderBy(desc('count')).limit(10)
+top_10.show()
+
+# top 10 rihanna tracks
+top10_rihanna_tracks = listening_df.select('artist','track').filter(listening_df.artist=='Rihanna').groupby('artist','track').agg(count('*').alias('count')).orderBy(desc('count')).limit(10)
+top10_rihanna_tracks.show()
+
+# top 10 famous albums
+famous_10_albums = listening_df.select('artist','album').groupby('artist','album').agg(count('*').alias('count')).orderBy(desc('count')).limit(10)
+famous_10_albums.show()
+
+# importing genre csv
+genre_csv_path = '/content/drive/MyDrive/genre.csv'
+genre_df = spark.read.format('csv').option('inferSchema',True).option('header',True).load(genre_csv_path)
+
+genre_df.show()
+
+listening_df.show()
+
+# combining both datasets
+data = listening_df.join(genre_df,how = 'inner', on = ['artist'])
+data.show()
+
+# top 10 users who are a fan of pop music
+top10_pop = data.select('user_id').filter(data.genre=='pop').groupby('user_id').agg(count('*').alias('count')).orderBy(desc('count')).limit(10)
+top10_pop.show()
+
+q7 = data.select('genre').agg(count('*').alias('count')).orderBy(desc('count')).limit(10)
+q7.show()
+
+q8_1 = data.select('user_id','genre').groupby('user_id','genre').agg(count('*').alias('count')).orderBy('user_id')
+q8_1.show()
+
+q8_2 = q8_1.groupby('user_id').agg(max(struct(col('count'),col('genre'))).alias('max')).select(col('user_id'),col('max.genre'))
+q8_2.show()
+
+q9 = genre_df.select('genre').filter((col('genre')=='pop')|(col('genre')=='rock')|(col('genre')=='metal')|(col('genre')=='hip hop')).groupby('genre').agg(count('genre').alias('count'))
+q9.show()
+
+q9_list = q9.collect()
+
+labels = [row['genre'] for row in q9_list]
+counts = [row['count'] for row in q9_list]
+
+print(labels)
+print(counts)
+
+plts.bar(labels,counts)
