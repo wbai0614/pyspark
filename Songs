@@ -1,2 +1,13 @@
 from google.colab import drive
 drive.mount('/content/drive')
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import count, desc, col, max, struct
+import matplotlib.pyplot as plts
+
+spark = SparkSession.builder.appName('Songs').getOrCreate()
+
+# importing listening csv
+listening_csv_path = '/content/drive/MyDrive/listenings.csv'
+listening_df = spark.read.format('csv').option('inferSchema',True).option('header',True).load(listening_csv_path)
+
+listening_df.show()
