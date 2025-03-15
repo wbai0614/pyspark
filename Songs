@@ -86,3 +86,11 @@ print(labels)
 print(counts)
 
 plts.bar(labels,counts)
+
+'''Based on the four genre of music: pop, hip hip, metal and rock, the highest genre of listeners is rock with over 10000 listeners. One action to take is to sign more artists of that genre. By signing more artists of that genre, we made sure to maximize what the customer's preference is. Also signing less artists from metal since there is less demand to it.
+
+Did analysis on the top selling albums Kanye West's Life of Pablo has the highest streams by far. By promoting his album, the company would get more people listening since he is already such a popular artist. This increases customer base because customers recognize the most popular artist and his album so there is more downloads for this app.
+
+The best selling track is Justin Beiber's Sorry with 2420 streams. The recommended approach would be to recommend this track more often to listeners since it is such a popular track. This leads to higher customer satisfaction with the app.
+
+Rihanna's best selling track is Work with 2646 streams. An approach would be recommending that song whenever the customer listens to Rihanna songs. This would also improve customer satisfaction.'''
